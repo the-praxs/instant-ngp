@@ -72,10 +72,14 @@ def parse_args():
 	return parser.parse_args()
 
 def get_scene(scene):
-	for scenes in [scenes_sdf, scenes_nerf, scenes_image, scenes_volume]:
-		if scene in scenes:
-			return scenes[scene]
-	return None
+	return next(
+		(
+			scenes[scene]
+			for scenes in [scenes_sdf, scenes_nerf, scenes_image, scenes_volume]
+			if scene in scenes
+		),
+		None,
+	)
 
 if __name__ == "__main__":
 	args = parse_args()

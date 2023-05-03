@@ -24,8 +24,7 @@ def parse_args():
 	parser.add_argument("--aabb_scale", default=1, help="large scene scale factor")
 	parser.add_argument("--white_transparent", action="store_true", help="White is transparent")
 	parser.add_argument("--black_transparent", action="store_true", help="White is transparent")
-	args = parser.parse_args()
-	return args
+	return parser.parse_args()
 
 def variance_of_laplacian(image):
 	return cv2.Laplacian(image, cv2.CV_64F).var()
@@ -33,8 +32,7 @@ def variance_of_laplacian(image):
 def sharpness(imagePath):
 	image = cv2.imread(imagePath)
 	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-	fm = variance_of_laplacian(gray)
-	return fm
+	return variance_of_laplacian(gray)
 
 if __name__ == "__main__":
 	args = parse_args()

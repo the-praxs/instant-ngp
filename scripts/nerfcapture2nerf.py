@@ -93,8 +93,7 @@ def live_streaming_loop(reader: DataReader, max_cameras: int):
 
 	# Start InstantNGP and DDS Loop
 	while testbed.frame():
-		sample = reader.read_next() # Get frame from NeRFCapture
-		if sample:
+		if sample := reader.read_next():
 			print(f"Frame {total_frames + 1} received")
 
 			# RGB
@@ -140,7 +139,12 @@ def dataset_capture_loop(reader: DataReader, save_path: Path, overwrite: bool, n
 	if save_path.exists():
 		if overwrite:
 			# Prompt user to confirm deletion
-			if (input(f"warning! folder '{save_path}' will be deleted/replaced. continue? (Y/n)").lower().strip()+"y")[:1] != "y":
+			if (
+				f"""{input(f"warning! folder '{save_path}' will be deleted/replaced. continue? (Y/n)").lower().strip()}y"""[
+					:1
+				]
+				!= "y"
+			):
 				sys.exit(1)
 			shutil.rmtree(save_path)
 		else:
@@ -165,8 +169,7 @@ def dataset_capture_loop(reader: DataReader, save_path: Path, overwrite: bool, n
 
 	# Start DDS Loop
 	while True:
-		sample = reader.read_next() # Get frame from NeRFCapture
-		if sample:
+		if sample := reader.read_next():
 			print(f"{total_frames + 1}/{n_frames} frames received")
 
 			if total_frames == 0:

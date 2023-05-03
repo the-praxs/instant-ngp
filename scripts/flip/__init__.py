@@ -47,7 +47,7 @@ def color_space_transform(input_color, fromSpace2toSpace):
         limit = 0.0031308
         transformed_color = np.where(input_color > limit, 1.055 * (input_color ** (1.0 / 2.4)) - 0.055, 12.92 * input_color)
 
-    elif fromSpace2toSpace == "linrgb2xyz" or fromSpace2toSpace == "xyz2linrgb":
+    elif fromSpace2toSpace in ["linrgb2xyz", "xyz2linrgb"]:
         # Source: https://www.image-engineering.de/library/technotes/958-how-to-convert-between-srgb-and-ciexyz
         # Assumes D65 standard illuminant
         a11 = 10135552 / 24577794
@@ -152,9 +152,7 @@ def color_space_transform(input_color, fromSpace2toSpace):
     return transformed_color
 
 def generate_spatial_filter(pixels_per_degree, channel):
-    a1_A = 1 
     b1_A = 0.0047
-    a2_A = 0
     b2_A = 1e-5 # avoid division by 0
     a1_rg = 1
     b1_rg = 0.0053
@@ -164,22 +162,22 @@ def generate_spatial_filter(pixels_per_degree, channel):
     b1_by = 0.04
     a2_by = 13.5
     b2_by = 0.025
-    if channel == "A": #Achromatic CSF
-        a1 = a1_A
+    if channel == "A":
+        a1 = 1
         b1 = b1_A
-        a2 = a2_A
+        a2 = 0
         b2 = b2_A
-    elif channel == "RG": #Red-Green CSF
-        a1 = a1_rg
-        b1 = b1_rg
-        a2 = a2_rg
-        b2 = b2_rg
-    elif channel == "BY": # Blue-Yellow CSF
+    elif channel == "BY":
         a1 = a1_by
         b1 = b1_by
         a2 = a2_by
         b2 = b2_by
 
+    elif channel == "RG":
+        a1 = a1_rg
+        b1 = b1_rg
+        a2 = a2_rg
+        b2 = b2_rg
     # Determine evaluation domain
     max_scale_parameter = max([b1_A, b2_A, b1_rg, b2_rg, b1_by, b2_by])
     r = np.ceil(3 * np.sqrt(max_scale_parameter / (2 * np.pi**2)) * pixels_per_degree)
@@ -187,7 +185,7 @@ def generate_spatial_filter(pixels_per_degree, channel):
     deltaX = 1.0 / pixels_per_degree
     x, y = np.meshgrid(range(-r, r + 1), range(-r, r + 1))
     z = (x * deltaX)**2 + (y * deltaX)**2
-    
+
     # Generate weights
     g = a1 * np.sqrt(np.pi / b1) * np.exp(-np.pi**2 * z / b1) + a2 * np.sqrt(np.pi / b2) * np.exp(-np.pi**2 * z / b2)
     g = g / np.sum(g)

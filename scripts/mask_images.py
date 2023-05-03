@@ -24,8 +24,7 @@ def parse_args():
 
 	parser.add_argument("--images", default="images", help="Input path to the images.")
 	parser.add_argument("--mask_categories", nargs="*", type=str, default=[], help="Object categories that should be masked out from the training images. See `scripts/category2id.json` for supported categories.")
-	args = parser.parse_args()
-	return args
+	return parser.parse_args()
 
 if __name__ == "__main__":
 	args = parse_args()
@@ -70,7 +69,7 @@ if __name__ == "__main__":
 			ext = ext.lower()
 
 			# Only consider image files
-			if ext != ".jpg" and ext != ".jpeg" and ext != ".png" and ext != ".exr" and ext != ".bmp":
+			if ext not in [".jpg", ".jpeg", ".png", ".exr", ".bmp"]:
 				continue
 
 			img = cv2.imread(os.path.join(IMAGE_FOLDER, filename))

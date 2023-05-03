@@ -125,14 +125,7 @@ def setup_colored_sdf(testbed, scene, softshadow=True):
 		testbed.fov,testbed.aperture_size,testbed.slice_plane_z=39.600,0.000,0.655
 
 		testbed.sdf.brdf.metallic=0.000
-		testbed.sdf.brdf.subsurface=0.000
 		testbed.sdf.brdf.specular=1.000
-		testbed.sdf.brdf.roughness=0.300
-		testbed.sdf.brdf.sheen=0.000
-		testbed.sdf.brdf.clearcoat=0.000
-		testbed.sdf.brdf.clearcoat_gloss=0.000
-		testbed.sdf.brdf.basecolor=[0.800,0.800,0.800]
-
 	elif scene == "cow":
 		testbed.background_color = [0.580, 0.882, 0.607, 1.000]
 		testbed.exposure = 0.5
@@ -144,14 +137,7 @@ def setup_colored_sdf(testbed, scene, softshadow=True):
 		testbed.scale=0.976
 
 		testbed.sdf.brdf.metallic=0.000
-		testbed.sdf.brdf.subsurface=0.000
 		testbed.sdf.brdf.specular=1.000
-		testbed.sdf.brdf.roughness=0.300
-		testbed.sdf.brdf.sheen=0.000
-		testbed.sdf.brdf.clearcoat=0.000
-		testbed.sdf.brdf.clearcoat_gloss=0.000
-		testbed.sdf.brdf.basecolor=[0.800,0.800,0.800]
-
 	elif scene == "clockwork":
 		testbed.background_color = [0.882, 0.731, 0.580, 1.000]
 		testbed.exposure = 3.000
@@ -163,14 +149,7 @@ def setup_colored_sdf(testbed, scene, softshadow=True):
 		testbed.fov,testbed.aperture_size,testbed.slice_plane_z=39.600,0.000,0.025
 
 		testbed.sdf.brdf.metallic=1.000
-		testbed.sdf.brdf.subsurface=0.000
 		testbed.sdf.brdf.specular=1.000
-		testbed.sdf.brdf.roughness=0.300
-		testbed.sdf.brdf.sheen=0.000
-		testbed.sdf.brdf.clearcoat=0.000
-		testbed.sdf.brdf.clearcoat_gloss=0.000
-		testbed.sdf.brdf.basecolor=[0.800,0.800,0.800]
-
 	elif scene == "lucy":
 		testbed.background_color = [0.597, 0.797, 0.697, 1.000]
 		testbed.exposure = 1.000
@@ -181,13 +160,7 @@ def setup_colored_sdf(testbed, scene, softshadow=True):
 		testbed.fov,testbed.aperture_size,testbed.slice_plane_z=39.600,0.000,0.768
 
 		testbed.sdf.brdf.metallic=0.000
-		testbed.sdf.brdf.subsurface=0.000
 		testbed.sdf.brdf.specular=0.194
-		testbed.sdf.brdf.roughness=0.300
-		testbed.sdf.brdf.sheen=0.000
-		testbed.sdf.brdf.clearcoat=0.000
-		testbed.sdf.brdf.clearcoat_gloss=0.000
-		testbed.sdf.brdf.basecolor=[0.800,0.800,0.800]
 		softshadow = True
 
 	else:
@@ -202,14 +175,14 @@ def setup_colored_sdf(testbed, scene, softshadow=True):
 		testbed.sun_dir=[0.541,-0.839,-0.042]
 
 		testbed.sdf.brdf.metallic=0.000
-		testbed.sdf.brdf.subsurface=0.000
 		testbed.sdf.brdf.specular=1.000
-		testbed.sdf.brdf.roughness=0.300
-		testbed.sdf.brdf.sheen=0.000
-		testbed.sdf.brdf.clearcoat=0.000
-		testbed.sdf.brdf.clearcoat_gloss=0.000
-		testbed.sdf.brdf.basecolor=[0.800,0.800,0.800]
+	testbed.sdf.brdf.basecolor=[0.800,0.800,0.800]
 
+	testbed.sdf.brdf.clearcoat_gloss=0.000
+	testbed.sdf.brdf.clearcoat=0.000
+	testbed.sdf.brdf.sheen=0.000
+	testbed.sdf.brdf.roughness=0.300
+	testbed.sdf.brdf.subsurface=0.000
 	testbed.autofocus_target=[0.500,0.500,0.500]
 	testbed.autofocus = False
 
@@ -217,12 +190,12 @@ def setup_colored_sdf(testbed, scene, softshadow=True):
 	testbed.sdf.use_triangle_octree = False
 
 	col = list(testbed.background_color)
-	testbed.sdf.brdf.ambientcolor = np.multiply(col,col)[0:3]
+	testbed.sdf.brdf.ambientcolor = np.multiply(col,col)[:3]
 	testbed.sdf.shadow_sharpness = 16 if softshadow else 2048
 	testbed.scale = testbed.scale * 1.13
 
 def default_snapshot_filename(scene_info):
-	filename = f"base.ingp"
+	filename = "base.ingp"
 	if scene_info["dataset"]:
 		filename = f"{os.path.splitext(scene_info['dataset'])[0]}_{filename}"
 	return os.path.join(scene_info["data_dir"], filename)

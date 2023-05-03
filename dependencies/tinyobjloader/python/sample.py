@@ -38,15 +38,15 @@ assert len(attrib.normals) % 3 == 0
 assert len(attrib.texcoords) % 2 == 0
 
 for (i, v) in enumerate(attrib.vertices):
-    print("v[{}] = {}".format(i, v))
+    print(f"v[{i}] = {v}")
 
 for (i, v) in enumerate(attrib.normals):
-    print("vn[{}] = {}".format(i, v))
+    print(f"vn[{i}] = {v}")
 
 for (i, v) in enumerate(attrib.texcoords):
-    print("vt[{}] = {}".format(i, t))
+    print(f"vt[{i}] = {t}")
 
-print("numpy_vertices = {}".format(attrib.numpy_vertices()))
+print(f"numpy_vertices = {attrib.numpy_vertices()}")
 
 materials = reader.GetMaterials()
 print("Num materials: ", len(materials))
@@ -68,11 +68,11 @@ shapes = reader.GetShapes()
 print("Num shapes: ", len(shapes))
 for shape in shapes:
     print(shape.name)
-    print("len(num_indices) = {}".format(len(shape.mesh.indices)))
+    print(f"len(num_indices) = {len(shape.mesh.indices)}")
     for (i, idx) in enumerate(shape.mesh.indices):
-        print("[{}] v_idx {}".format(i, idx.vertex_index))
-        print("[{}] vn_idx {}".format(i, idx.normal_index))
-        print("[{}] vt_idx {}".format(i, idx.texcoord_index))
-    print("numpy_indices = {}".format(shape.mesh.numpy_indices()))
-    print("numpy_num_face_vertices = {}".format(shape.mesh.numpy_num_face_vertices()))
-    print("numpy_material_ids = {}".format(shape.mesh.numpy_material_ids()))
+        print(f"[{i}] v_idx {idx.vertex_index}")
+        print(f"[{i}] vn_idx {idx.normal_index}")
+        print(f"[{i}] vt_idx {idx.texcoord_index}")
+    print(f"numpy_indices = {shape.mesh.numpy_indices()}")
+    print(f"numpy_num_face_vertices = {shape.mesh.numpy_num_face_vertices()}")
+    print(f"numpy_material_ids = {shape.mesh.numpy_material_ids()}")

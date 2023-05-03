@@ -94,23 +94,23 @@ class Writer(object):
     def comment(self, text, has_path=False):
         for line in textwrap.wrap(text, self.width - 2, break_long_words=False,
                                   break_on_hyphens=False):
-            self.output.write('# ' + line + '\n')
+            self.output.write(f'# {line}' + '\n')
 
     def variable(self, key, value, indent=0):
         if value is None:
             return
         if isinstance(value, list):
             value = ' '.join(filter(None, value))  # Filter out empty strings.
-        self._line('%s = %s' % (key, value), indent)
+        self._line(f'{key} = {value}', indent)
 
     def pool(self, name, depth):
-        self._line('pool %s' % name)
+        self._line(f'pool {name}')
         self.variable('depth', depth, indent=1)
 
     def rule(self, name, command, description=None, depfile=None,
              generator=False, pool=None, restat=False, rspfile=None,
              rspfile_content=None, deps=None):
-        self._line('rule %s' % name)
+        self._line(f'rule {name}')
         self.variable('command', command, indent=1)
         if description:
             self.variable('description', description, indent=1)
@@ -144,8 +144,7 @@ class Writer(object):
             all_inputs.append('||')
             all_inputs.extend(order_only)
 
-        self._line('build %s: %s' % (' '.join(out_outputs),
-                                     ' '.join([rule] + all_inputs)))
+        self._line(f"build {' '.join(out_outputs)}: {' '.join([rule] + all_inputs)}")
 
         if variables:
             if isinstance(variables, dict):
@@ -159,13 +158,13 @@ class Writer(object):
         return outputs
 
     def include(self, path):
-        self._line('include %s' % path)
+        self._line(f'include {path}')
 
     def subninja(self, path):
-        self._line('subninja %s' % path)
+        self._line(f'subninja {path}')
 
     def default(self, paths):
-        self._line('default %s' % ' '.join(as_list(paths)))
+        self._line(f"default {' '.join(as_list(paths))}")
 
     def _count_dollars_before_index(self, s, i):
         """Returns the number of '$' characters right in front of s[i]."""
@@ -204,7 +203,7 @@ class Writer(object):
                 # Give up on breaking.
                 break
 
-            self.output.write(leading_space + text[0:space] + ' $\n')
+            self.output.write(leading_space + text[:space] + ' $\n')
             text = text[space+1:]
 
             # Subsequent lines are continuations, so indent them.
@@ -219,9 +218,7 @@ class Writer(object):
 def as_list(input):
     if input is None:
         return []
-    if isinstance(input, list):
-        return input
-    return [input]
+    return input if isinstance(input, list) else [input]
 
 # -- end from ninja_syntax.py --
 
@@ -232,15 +229,15 @@ def gen(ninja, toolchain, config):
 
     if hasattr(config, "builddir"):
         builddir = config.builddir[toolchain]
-        ninja.variable(toolchain + 'builddir', builddir)
+        ninja.variable(f'{toolchain}builddir', builddir)
     else:
         builddir = ''
 
-    ninja.variable(toolchain + 'defines', config.defines[toolchain] or [])
-    ninja.variable(toolchain + 'includes', config.includes[toolchain] or [])
-    ninja.variable(toolchain + 'cflags', config.cflags[toolchain] or [])
-    ninja.variable(toolchain + 'cxxflags', config.cxxflags[toolchain] or [])
-    ninja.variable(toolchain + 'ldflags', config.ldflags[toolchain] or [])
+    ninja.variable(f'{toolchain}defines', config.defines[toolchain] or [])
+    ninja.variable(f'{toolchain}includes', config.includes[toolchain] or [])
+    ninja.variable(f'{toolchain}cflags', config.cflags[toolchain] or [])
+    ninja.variable(f'{toolchain}cxxflags', config.cxxflags[toolchain] or [])
+    ninja.variable(f'{toolchain}ldflags', config.ldflags[toolchain] or [])
     ninja.newline()
 
     if hasattr(config, "link_pool_depth"):
@@ -256,15 +253,15 @@ def gen(ninja, toolchain, config):
 
     obj_files = []
 
-    cc = toolchain + 'cc'
-    cxx = toolchain + 'cxx'
-    link = toolchain + 'link'
-    ar = toolchain + 'ar'
-    
+    cc = f'{toolchain}cc'
+    cxx = f'{toolchain}cxx'
+    link = f'{toolchain}link'
+    ar = f'{toolchain}ar'
+
     if hasattr(config, "cxx_files"):
         for src in config.cxx_files:
             srcfile = src
-            obj = os.path.splitext(srcfile)[0] + '.o'
+            obj = f'{os.path.splitext(srcfile)[0]}.o'
             obj = os.path.join(builddir, obj);
             obj_files.append(obj)
             ninja.build(obj, cxx, srcfile)
@@ -273,7 +270,7 @@ def gen(ninja, toolchain, config):
     if hasattr(config, "c_files"):
         for src in config.c_files:
             srcfile = src
-            obj = os.path.splitext(srcfile)[0] + '.o'
+            obj = f'{os.path.splitext(srcfile)[0]}.o'
             obj = os.path.join(builddir, obj);
             obj_files.append(obj)
             ninja.build(obj, cc, srcfile)
@@ -290,7 +287,7 @@ def gen(ninja, toolchain, config):
 
     ninja.build('all', 'phony', targetlist)
     ninja.newline()
-        
+
     ninja.default('all')
 
 def main():
@@ -300,13 +297,12 @@ def main():
 
     config = imp.load_source("config", sys.argv[1])
 
-    f = open('build.ninja', 'w')
-    ninja = Writer(f)
+    with open('build.ninja', 'w') as f:
+        ninja = Writer(f)
 
-    if hasattr(config, "register_toolchain"):
-        config.register_toolchain(ninja)
-        
-    gen(ninja, config.toolchain, config)
-    f.close()
+        if hasattr(config, "register_toolchain"):
+            config.register_toolchain(ninja)
+
+        gen(ninja, config.toolchain, config)
 
 main()

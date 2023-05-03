@@ -60,8 +60,7 @@ def index2color(index_map, color_map):
 	dim = index_map.shape
 	index_map = index_map.flatten().astype(int)
 	column_stacked_colors = color_map[index_map, :]
-	heat_map = np.reshape(column_stacked_colors.transpose(), (3, dim[0], dim[1]))
-	return heat_map
+	return np.reshape(column_stacked_colors.transpose(), (3, dim[0], dim[1]))
 
 def get_magma_map():
     # Source: https://bids.github.io/colormap/

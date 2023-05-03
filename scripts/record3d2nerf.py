@@ -89,8 +89,7 @@ def parse_args():
 	parser.add_argument("--scene", default="", help="path to the Record3D capture")
 	parser.add_argument("--rotate", action="store_true", help="rotate the dataset")
 	parser.add_argument("--subsample", default=1, type=int, help="step size of subsampling")
-	args = parser.parse_args()
-	return args
+	return parser.parse_args()
 
 if __name__ == "__main__":
 	args = parse_args()
@@ -149,15 +148,16 @@ if __name__ == "__main__":
 		cx = K[1, 2]
 		cy = h - K[0, 2]
 
-	transforms = {}
-	transforms['fl_x'] = fx
-	transforms['fl_y'] = fy
-	transforms['cx'] = cx
-	transforms['cy'] = cy
-	transforms['w'] = w
-	transforms['h'] = h
-	transforms['aabb_scale'] = 16
-	transforms['scale'] = 1.0
+	transforms = {
+		'fl_x': fx,
+		'fl_y': fy,
+		'cx': cx,
+		'cy': cy,
+		'w': w,
+		'h': h,
+		'aabb_scale': 16,
+		'scale': 1.0,
+	}
 	transforms['camera_angle_x'] = 2 * np.arctan(transforms['w'] / (2 * transforms['fl_x']))
 	transforms['camera_angle_y'] = 2 * np.arctan(transforms['h'] / (2 * transforms['fl_y']))
 	transforms['frames'] = frames
